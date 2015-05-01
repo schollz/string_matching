@@ -1,5 +1,5 @@
 import json
-from time import time
+from time import time, sleep
 from string_matching import *
 import cPickle as pickle
 import sys
@@ -41,3 +41,4 @@ print 'trying dictionary took ' + str(time()-tt)
 tt = time()
 print searchThroughHash(string)
 print 'searching through hash took ' + str(time()-tt)
+
