@@ -2,7 +2,7 @@ import json
 from time import time
 from string_matching import *
 import cPickle as pickle
-
+import sys
 '''
 tt = time()
 bands = json.load(open('../music-list/bands.json','r'))
@@ -22,13 +22,13 @@ pickle.dump(band_hash,open('defaultHash.p','w'))
 print 'dumping hash took ' + str(time()-tt)
 '''
 
-string = 'led zepplin'
+string = sys.argv[1]
 
 print "trying with " + string
 
 tt = time()
 print searchThroughList(string)
-print 'searching through list of ' + str(len(band_names)) + ' took ' + str(time()-tt)
+print 'searching through list took ' + str(time()-tt)
 
 tt = time()
 try:

@@ -21,7 +21,7 @@ except:
 def compareStrings(strings):
 	leven1 = fuzz.token_set_ratio(strings[0],strings[1])
 	leven2 = Levenshtein.ratio(str(strings[0]),str(strings[1]))
-	return (strings[0],strings[1],leven1,leven2)
+	return (strings[0],strings[1],leven1+leven2*100,leven2)
 	
 def searchThroughList(searchString,listOfStrings=defaultList):
 	if len(listOfStrings)==0:
@@ -36,6 +36,7 @@ def searchThroughList(searchString,listOfStrings=defaultList):
 	pool2.join()
 	#print (sorted(results, key=operator.itemgetter(2, 3), reverse=True))[:10]
 	topResult = (sorted(results, key=operator.itemgetter(2, 3), reverse=True))[0]
+	print (sorted(results, key=operator.itemgetter(2, 3), reverse=True))[:10]
 	return listOfStrings[[x.lower() for x in listOfStrings].index(topResult[1])]
 
 def generateSearchableHashFromList(listOfStrings):
