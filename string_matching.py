@@ -3,65 +3,64 @@ from fuzzywuzzy import process
 import Levenshtein
 import operator
 from multiprocessing import Pool
+from collections import Counter
 import cPickle as pickle
-import time
 
-''' Get rid of the big matrix
-print 'getting tree'
-(t,genreNames,bandNames,bandIds,X) = pickle.load(open('tree.p','r'))
-print 'dumping band names'
-pickle.dump((t,genreNames,bandNames,bandIds),open('bandNames.p','w'))
-print 'done'
-'''
+try:
+	defaultList = pickle.load(open('defaultList.p','r'))
+except:
+	defaultList = []
 
-print 'getting band names'
-tt=time.time()
-(t,genreNames,bandNames,bandIds) = pickle.load(open('bandNames2.p','r'))
-print 'done'
-print time.time()-tt
+try:
+	defaultHash = pickle.load(open('defaultHash.p','r'))
+except:
+	defaultHash = {}
+
+
 
 def compareStrings(strings):
 	leven1 = fuzz.token_set_ratio(strings[0],strings[1])
 	leven2 = Levenshtein.ratio(str(strings[0]),str(strings[1]))
 	return (strings[0],strings[1],leven1,leven2)
 	
-def getRelated(searchString):
+def searchThroughList(searchString,listOfStrings=defaultList):
+	if len(listOfStrings)==0:
+		return "You need to save a hash to defaultHash.p if you want to load one automatically!"
 	stringList = []
-	for bandName in bandNames:
-		stringList.append((searchString,bandName))
+	for string in listOfStrings:
+		stringList.append((searchString.lower(),string.lower()))
 		
 	pool2 = Pool(2) 
-	tt=time.time()
 	results = pool2.map(compareStrings, stringList)
 	pool2.close()
 	pool2.join()
 	#print (sorted(results, key=operator.itemgetter(2, 3), reverse=True))[:10]
 	topResult = (sorted(results, key=operator.itemgetter(2, 3), reverse=True))[0]
-	bandIndex = bandNames.index(topResult[1])
-	bandActualIndex = bandIds[bandIndex]
+	return listOfStrings[[x.lower() for x in listOfStrings].index(topResult[1])]
 
-	subtree = t
-	for leaf in t.traverse("postorder"):
-		try:
-			if str(leaf.name) == str(bandActualIndex)+'.':
-				for tree in leaf.iter_ancestors():
-					subtree = tree
-					if len(subtree.get_leaf_names())>5:
-						break
-		except:
-			pass
-	textTree = subtree.get_ascii(show_internal=False)
-	relatedBands = []
-	for leaf in subtree.traverse("postorder"):
-		try:
-			pseudoIndex = bandIds.index(int(leaf.name[:-1]))
-			if str(leaf.name) == str(bandActualIndex)+'.':
-				replacement = "<span style='color:red;'><b>%(name)s</b></span>"
-			else:
-				replacement = "%(name)s"
-			
-			textTree = textTree.replace(leaf.name,replacement % {'name':bandNames[pseudoIndex]})
-			relatedBands.append(bandNames[pseudoIndex])
-		except:
-			pass
-	return (textTree,relatedBands)
+def generateSearchableHashFromList(listOfStrings):
+	sHash = {}
+	for string in listOfStrings:
+		for i in range(0,len(string)-2):
+			doublet = string[i:i+3].lower()
+			if doublet not in sHash:
+				sHash[doublet] = []
+			sHash[doublet].append(string)
+	return sHash
+	
+
+def searchThroughHash(searchString,sHash=defaultHash):
+	if len(sHash)==0:
+		return "You need to save a hash to defaultHash.p if you want to load one automatically!"
+	searchString = searchString.lower()
+	possibleStrings = []
+	for i in range(0,len(searchString)-2):
+		doublet = searchString[i:i+3]
+		if doublet in sHash:
+			possibleStrings += sHash[doublet]
+	c = Counter(possibleStrings)
+	mostPossible = []
+	for p in c.most_common(1000):
+		mostPossible.append(p[0])
+	return searchThroughList(searchString,mostPossible)
+	
