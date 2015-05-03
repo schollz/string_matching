@@ -28,7 +28,7 @@ Then install the dependencies using ```pip```:
 pip install fuzzywuzzy python-Levenshtein
 ```
 
-## Run it!
+## Examples
 
 After you finished the setup, finally run the ```setup.py``` to generate the pickle files.
 
