@@ -1,4 +1,4 @@
-import cPickle as pickle
+import pickle
 from time import time 
 from string_matching import *
 

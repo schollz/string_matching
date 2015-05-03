@@ -4,7 +4,7 @@ import Levenshtein
 import operator
 from multiprocessing import Pool
 from collections import Counter
-import cPickle as pickle
+import pickle
 
 try:
 	defaultList = pickle.load(open('defaultList.p','r'))

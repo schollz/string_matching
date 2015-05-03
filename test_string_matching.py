@@ -1,7 +1,7 @@
 import json
 from time import time
 from string_matching import *
-import cPickle as pickle
+import pickle
 import sys
 
 string = sys.argv[1]
