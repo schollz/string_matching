@@ -1,12 +1,18 @@
 # String Matching in Python #
 
-I constantly find myself in a situation where I need to have the user enter a string and find the best match for that string from a list of strings. In order to compensate for mispellings I've found the [fuzzywuzzy package](https://github.com/seatgeek/fuzzywuzzy) very helpful. But how about speed? Its hard to do that over 100,000+ words.
+## The problem 
+
+I constantly find myself in a situation where I need to have the user enter a string and find the best match for that string from a list of strings. In order to compensate for misspellings I've found the [fuzzywuzzy package](https://github.com/seatgeek/fuzzywuzzy) very helpful. But how about speed? Its slow to do that over 100,000+ words.
+
+## The solution
 
 To solve this I made a hash table of string doublets. For example a word like "pillow" is composed of ```['pi','il','ll','lo','ow']``` doublets. To make the hash table, each doublet then is put into a dictionary where each of the entries map back to the word, 'pillow'. 
 
-To use this hash table, you can then take an input string, find the string doublets and then get a new list of "most likely" strings that correspond to the values in though string doublet keys. Searching through those is very likely a very small fraction of the entire list, thus it takes a small fraction of the time!
+To use this hash table, you can then take an input string, find the string doublets and then get a new list of "most likely" strings that correspond to the values in though string doublet keys. Searching through those is very likely a very small fraction of the entire list, thus it takes a small fraction of the time! I also use a multiprocessing pool to speed up this part of the search.
 
-# Setup
+# Try it out!
+
+## Initial Setup
 
 First download a wordlist. The example I use below uses [this one](http://www-personal.umich.edu/~jlawler/wordlist.html) which you can download from the terminal with:
 
@@ -22,7 +28,7 @@ Then install the dependencies using ```pip```:
 pip install fuzzywuzzy python-Levenshtein
 ```
 
-# Try it out!
+## Run it!
 
 After you finished the setup, finally run the ```setup.py``` to generate the pickle files.
 
